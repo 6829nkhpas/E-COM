@@ -8,11 +8,13 @@ A full-stack e-commerce application built with React, Node.js, Express, and Mong
 ## 🚀 Features
 
 - **Product Catalog**: Browse through a variety of products with images, prices, and descriptions
+- **Fake Store API Integration**: Fetch real product data from fakestoreapi.com with MongoDB persistence
 - **Shopping Cart**: Add, update, and remove items from cart with real-time updates
 - **Checkout System**: Complete mock checkout with order confirmation
 - **Responsive Design**: Mobile-first design that works on all devices
 - **Persistent Cart**: Cart data persists in MongoDB between sessions
 - **REST API**: Full-featured backend API with error handling
+- **Flexible Product Source**: Switch between Fake Store API (20 products) or custom products via environment variable
 
 ## 🛠️ Tech Stack
 
@@ -238,7 +240,12 @@ vibe-commerce/
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/vibe-commerce
 NODE_ENV=development
+USE_FAKE_STORE_API=true  # Set to 'true' to fetch from Fake Store API, 'false' for custom products
 ```
+
+**Product Source Options:**
+- `USE_FAKE_STORE_API=true` - Fetches 20 products from fakestoreapi.com and persists them in MongoDB
+- `USE_FAKE_STORE_API=false` - Uses 8 custom Nexora-themed products
 
 ### Frontend (.env)
 ```
