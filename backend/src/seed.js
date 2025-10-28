@@ -2,7 +2,11 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const Product = require('./models/Product');
 
-const products = [
+// Use Fake Store API or custom products based on environment variable
+const USE_FAKE_STORE_API = process.env.USE_FAKE_STORE_API === 'true';
+
+// Fallback custom products if API fails or not enabled
+const customProducts = [
   {
     name: "Regular Unisex T shirt",
     price: 2150.0,
@@ -70,6 +74,38 @@ const products = [
   },
 ];
 
+// Fetch products from Fake Store API
+const fetchFromFakeStoreAPI = async () => {
+  try {
+    console.log('Fetching products from Fake Store API...');
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch('https://fakestoreapi.com/products');
+    
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
+    
+    const apiProducts = await response.json();
+    
+    // Transform API products to match our schema
+    const transformedProducts = apiProducts.map(product => ({
+      name: product.title,
+      price: product.price * 80, // Convert USD to INR (approximate)
+      description: product.description,
+      image: product.image,
+      category: product.category,
+      stock: Math.floor(Math.random() * 50) + 10, // Random stock between 10-60
+    }));
+    
+    console.log(`✓ Fetched ${transformedProducts.length} products from Fake Store API`);
+    return transformedProducts;
+  } catch (error) {
+    console.error('✗ Failed to fetch from Fake Store API:', error.message);
+    console.log('→ Falling back to custom products');
+    return customProducts;
+  }
+};
+
 const seedDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -79,15 +115,28 @@ const seedDB = async () => {
     await Product.deleteMany({});
     console.log("Cleared existing products");
 
-    // Insert new products
-    await Product.insertMany(products);
-    console.log("Seeded products successfully");
+    // Get products from API or use custom products
+    let products;
+    if (USE_FAKE_STORE_API) {
+      products = await fetchFromFakeStoreAPI();
+    } else {
+      console.log('Using custom products (set USE_FAKE_STORE_API=true to use Fake Store API)');
+      products = customProducts;
+    }
 
-    console.log("\nSeeded Products:");
+    // Insert products into MongoDB for persistence
+    await Product.insertMany(products);
+    console.log(`✓ Seeded ${products.length} products successfully to MongoDB`);
+
+    console.log("\n📦 Seeded Products:");
     products.forEach((product, index) => {
-      console.log(`${index + 1}. ${product.name} - ₹${product.price}`);
+      console.log(`${index + 1}. ${product.name} - ₹${product.price.toFixed(2)}`);
     });
 
+    console.log('\n✅ Database seeding complete!');
+    console.log(`📊 Total products in database: ${products.length}`);
+    console.log(`🗄️  Products are now persisted in MongoDB`);
+    
     process.exit(0);
   } catch (error) {
     console.error("Error seeding database:", error);
