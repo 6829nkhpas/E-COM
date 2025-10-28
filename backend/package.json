@@ -9,7 +9,11 @@
     "seed": "node src/seed.js",
     "test": "jest --verbose"
   },
-  "keywords": ["ecommerce", "express", "mongodb"],
+  "keywords": [
+    "ecommerce",
+    "express",
+    "mongodb"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
