@@ -4,6 +4,10 @@ A full-stack e-commerce application built with React, Node.js, Express, and Mong
 
 ![Nexora E-Commerce](https://img.shields.io/badge/Status-Active-success)
 ![License](https://img.shields.io/badge/License-MIT-blue)
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
 
 ## 🚀 Features
 
